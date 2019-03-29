@@ -344,7 +344,7 @@ int CanIface::computeTimings(const uavcan::uint32_t target_bitrate, Timings& out
 uavcan::int16_t CanIface::send(const uavcan::CanFrame& frame, uavcan::MonotonicTime tx_deadline,
                                uavcan::CanIOFlags flags)
 {
-    if (frame.isErrorFrame() || frame.dlc > 8)
+    if (frame.isErrorFrame() || uavcan::uint8_t(frame.dlc) > 8)
     {
         return -ErrUnsupportedFrame;
     }
@@ -407,7 +407,7 @@ uavcan::int16_t CanIface::send(const uavcan::CanFrame& frame, uavcan::MonotonicT
         mb.TIR |= bxcan::TIR_RTR;
     }
 
-    mb.TDTR = frame.dlc;
+    mb.TDTR = uavcan::uint32_t(rame.dlc);
 
     mb.TDHR = (uavcan::uint32_t(frame.data[7]) << 24) |
               (uavcan::uint32_t(frame.data[6]) << 16) |
@@ -751,7 +751,7 @@ void CanIface::handleRxInterrupt(uavcan::uint8_t fifo_index, uavcan::uint64_t ut
         frame.id |= uavcan::CanFrame::FlagRTR;
     }
 
-    frame.dlc = rf.RDTR & 15;
+    frame.dlc = static_cast<uavcan::CanFrameDLC>(rf.RDTR & 15);
 
     frame.data[0] = uavcan::uint8_t(0xFF & (rf.RDLR >> 0));
     frame.data[1] = uavcan::uint8_t(0xFF & (rf.RDLR >> 8));
