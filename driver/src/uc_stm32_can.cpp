@@ -407,7 +407,7 @@ uavcan::int16_t CanIface::send(const uavcan::CanFrame& frame, uavcan::MonotonicT
         mb.TIR |= bxcan::TIR_RTR;
     }
 
-    mb.TDTR = uavcan::uint32_t(rame.dlc);
+    mb.TDTR = uavcan::uint32_t(frame.dlc);
 
     mb.TDHR = (uavcan::uint32_t(frame.data[7]) << 24) |
               (uavcan::uint32_t(frame.data[6]) << 16) |
